@@ -6,7 +6,7 @@ import { DefaultText, SVGs } from '@/components/elements'
 import { useNotifyContext } from '@/lib/Contexts'
 
 const StyledNotification = styled.div<any>`
-  ${bgColor('blue')};
+  ${bgColor('black')};
   display: ${(props: any) => (props.notify ? 'flex' : 'none')};
   position: fixed;
   top: 0;
@@ -116,8 +116,8 @@ const NotifyBanner = () => {
         align="center"
         customMargin="0 21px 0 0"
       >
-        <span className="mobile-text">{t('bannerMobile')}</span>
-        <span className="tablet-text">{t('banner')}</span>
+        <span className="mobile-text">{t('bannerMobile')} &#x1F60A;</span>
+        <span className="tablet-text">{t('banner')} &#x1F60A;</span>
       </DefaultText>
 
       {/* <StyledActivation fontSz="xxs" customColor="green" align="center">

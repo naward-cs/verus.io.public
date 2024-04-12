@@ -94,51 +94,6 @@ const EthTopRight = styled.div`
   `}
 `
 
-// const StyledBadgeRow = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   margin-bottom: 5px;
-//   span {
-//     ${fontFam('geoHead')}
-//     font-size: 14px;
-//     color: #969696;
-//   }
-//   ${media.desktop`
-//     flex-direction: row;
-//     justify-content: flex-start;
-//     align-items: center;
-//   `}
-// `
-
-// const PreBadge = styled.div`
-//   ${fontFam('geoHead')}
-//   width: 104px !important;
-//   height: 17px !important;
-//   flex-shrink: 0;
-//   border-radius: 7px;
-//   background: #008f06;
-//   font-size: 10px;
-//   diplay: flex;
-//   align-items: center;
-//   justify-content: center;
-//   // padding: 5px 7px;
-//   text-align: center;
-//   color: white;
-//   margin-right: 10px;
-//   margin-bottom: 10px;
-//   ${media.tablet`
-//     margin-bottom: 0;
-//     font-size: 12px;
-//     width: 125px !important;
-//   height: 24px !important;
-//   `}
-// `
-
-// const DateP = styled.p`
-//   ${fontFam('geoHead')}
-//   margin: 0 5px;
-// `
-
 const BlueBarTextWrapper = styled.div<any>`
   ${(props: any) => props.top && 'margin-top: 25px;'}
   &.toptop {
@@ -207,32 +162,6 @@ const Tooltip = styled.div<any>`
     border-color: rgba(0, 0, 0, 0.5) transparent transparent transparent;
   }
 `
-
-// const StyledBottomCard = styled(EthTopLeft)`
-//   h5 {
-//     ${fontSize('sm')}
-//     margin-bottom: 0;
-//     padding-bottom: 0;
-//   }
-//   p {
-//     ${fontSize('menu')}
-//     max-width: 575px;
-//   }
-//   a {
-//     margin-top: 40px;
-//     display: flex;
-//     align-items: center;
-//     width: fit-content;
-//     svg {
-//       height: 16px;
-//     }
-//     svg.medium {
-//       height: 24px;
-//       margin-right: 5px;
-//       fill: black;
-//     }
-//   }
-// `
 
 const StyledBlueRow = styled.div`
   display: grid;
@@ -370,23 +299,6 @@ const StyledBlueRowContent = styled(StyledBlueRow)`
   `}
 `
 
-// const StyledLaunchBlock = styled.div`
-//   display: flex;
-//   p {
-//     font-size: 12px;
-//   }
-
-//   align-items: center;
-//   span {
-//     font-size: 12px;
-//   }
-//   ${media.tablet`
-//   p{font-size: 16px;}
-  
-//   span{font-size:14px;}
-//   align-items: baseline;
-//   `};
-// `
 const StyledLiquid = styled(StyledBlueRowContent)`
   border-radius: 7px;
   border: 1px solid #3165d4;
@@ -409,41 +321,18 @@ type Token = {
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
-// const blockNumber: number = parseInt(
-//   process.env.NEXT_PUBLIC_NOTIFY_BANNER_BLOCK || '0'
-// )
 
 const EthBridge = ({ bridgeFallback }: { bridgeFallback: any }) => {
-  // const { blockCount } = useNotifyContext()
-  // const [timeLeft, setTimeLeft] = useState<string>()
   const [poolLiquidity, setPoolLiquidity] = useState(0)
   const { data: ConversionList } = useSWR('/api/conversion', fetcher, {
-    refreshInterval: 60_000, //every minute
+    refreshInterval: 10 * 60_000, //every minute
     fallback: bridgeFallback,
   })
-
-  // useEffect(() => {
-  //   if (blockCount) {
-  //     //1 block = approx 1 minute
-  //     const newBlockCount = blockCount * 1.05
-  //     const days = Math.floor(newBlockCount / 1440)
-
-  //     const hours = Math.floor((newBlockCount % 1440) / 60)
-
-  //     const minutes = Math.floor((newBlockCount % 1440) % 60)
-  //     setTimeLeft(`${days}d, ${hours}h, ${minutes}m`)
-  //   }
-  // }, [blockCount])
 
   useEffect(() => {
     if (ConversionList) {
       const amount =
         ConversionList.bridge.daiPrice * ConversionList.bridge.amount
-      //    const amount = ConversionList.list.reduce(
-      //      (total: number, token: Conversion & { price: number }) =>
-      //        total + token.amount * token.price,
-      //      0
-      //    )
       setPoolLiquidity(amount)
     }
   }, [ConversionList])
@@ -455,15 +344,6 @@ const EthBridge = ({ bridgeFallback }: { bridgeFallback: any }) => {
         <StyledEthBridgeGrid>
           <EthBridgeTopCard>
             <EthTopLeft>
-              {/* <StyledBadgeRow>
-                <PreBadge>IN PRECONVERSION</PreBadge>
-                <StyledLaunchBlock>
-                  <DateP>{timeLeft} left</DateP>
-                  <span>
-                    Launch block: {Intl.NumberFormat().format(blockNumber)}
-                  </span>
-                </StyledLaunchBlock>
-              </StyledBadgeRow> */}
               <BlueBarTextWrapper className="toptop">
                 <StyledBlueRow>
                   <p style={{ marginLeft: '2px' }}>Liquidity pool</p>
@@ -590,7 +470,7 @@ const EthBridge = ({ bridgeFallback }: { bridgeFallback: any }) => {
                           minimumFractionDigits: 2,
                         }).format(token.daiPrice)}
                       </p>
-                      <p className={`equal ${rate}`}>
+                      <p className={`equal ${token.price !== 0 && rate}`}>
                         {token.price !== 0
                           ? rate !== 'equal' && <BiSolidUpArrow />
                           : null}
@@ -600,7 +480,7 @@ const EthBridge = ({ bridgeFallback }: { bridgeFallback: any }) => {
                               maximumFractionDigits: 2,
                               minimumFractionDigits: 2,
                             }).format(Math.abs(percent))
-                          : 'Error'}
+                          : 'no data'}
                       </p>
                     </StyledBlueRowContent>
                   )
